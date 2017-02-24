@@ -12,6 +12,7 @@ import hebblearning.perceptron.TestSetElement;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -51,6 +52,7 @@ public class Plot extends JComponent {
     
     @Override
     public void paint(Graphics grphcs) {
+        super.paint(grphcs);
         if (this.ptask == null)
             return;
         
@@ -87,6 +89,13 @@ public class Plot extends JComponent {
         g2.draw(new Rectangle2D.Double(rect_x, rect_y, rect_w, rect_h));
         g2.draw(new Line2D.Double(0, rect_y+rect_h, width, rect_y+rect_h));
         g2.draw(new Line2D.Double(rect_x, 0, rect_x, height));
+        int ts = g2.getFont().getSize();
+        g2.drawString(Double.toString(x_min), (float)rect_x, (float)(rect_y+rect_h+ts));
+        g2.drawString(Double.toString(x_max), (float)(rect_x+rect_w), (float)(rect_y+rect_h+ts));
+        String y_min_str = Double.toString(y_min);
+        String y_max_str = Double.toString(y_max);
+        g2.drawString(y_min_str, (float)(rect_x-(ts/1.7)*y_min_str.length()), (float)(rect_y+rect_h));
+        g2.drawString(y_max_str, (float)(rect_x-(ts/1.7)*y_max_str.length()), (float)(rect_y));
         
         List<TestSetElement> points = this.ptask.getTestSet();
         points.addAll(this.ptask.getTrainSet());
@@ -107,6 +116,7 @@ public class Plot extends JComponent {
         sd.x_scale = x_scale;
         sd.y_scale = y_scale;
         
+        g2.setColor(Color.BLUE);
         for (TestSetElement p : points)
         {
             double x = (p.getInputs()[0] - x_min)*x_scale + rect_x;
@@ -115,7 +125,6 @@ public class Plot extends JComponent {
 //            System.out.printf("Point: %f %f // %f %f\n", p.getInputs()[0],
 //                    p.getInputs()[1], x, y);
             
-            g2.setColor(Color.BLUE);
             g2.draw(new Ellipse2D.Double(x-ratio/2, y+ratio/2, ratio, ratio));
         }
         
@@ -154,8 +163,6 @@ public class Plot extends JComponent {
 //                    borders.get(1).getX());
             g2.draw(new Line2D.Double(borders.get(0), borders.get(1)));
         }
-        
-        super.paint(grphcs);
     }
     
     private Point2D mapFromPx(Point2D point, ScreenData sd)

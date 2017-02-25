@@ -5,12 +5,21 @@
  */
 package hebblearning.gui;
 
+import hebblearning.perceptron.Perceptron;
 import hebblearning.perceptron.PerceptronTask;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -21,12 +30,16 @@ public class MainFrame extends javax.swing.JFrame {
     
     private PerceptronTask ptask = null;
     private File datafile = null;
+//    private JTable tWeights;
+//    private JTable tTrain;
+//    private JTable tTest;
     
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
+        this.sldLRate.setValue(3);
     }
 
     /**
@@ -49,6 +62,15 @@ public class MainFrame extends javax.swing.JFrame {
         lblStateHead = new javax.swing.JLabel();
         lblState = new javax.swing.JLabel();
         leftPanel = new javax.swing.JPanel();
+        sldLRate = new javax.swing.JSlider();
+        lblLRate = new javax.swing.JLabel();
+        lblSlider = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblWeights = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblTrain = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblTest = new javax.swing.JTable();
         rightPanel = new javax.swing.JPanel();
         plot = new hebblearning.gui.Plot();
 
@@ -116,7 +138,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(lblStateHead)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblState)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
                 .addComponent(btnLoadXml)
                 .addGap(9, 9, 9)
                 .addComponent(btnSaveXml)
@@ -136,15 +158,110 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(lblState))
         );
 
+        sldLRate.setMaximum(10);
+        sldLRate.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sldLRateStateChanged(evt);
+            }
+        });
+
+        lblLRate.setText("Learning rate:");
+
+        lblSlider.setText("0.3");
+
+        tblWeights.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "w(i)", "Weight", "Input", "Min", "Max"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblWeights);
+
+        tblTrain.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Input 1", "Input 2", "y_e", "y_c"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tblTrain);
+
+        tblTest.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Input 1", "Input 2", "y_c"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(tblTest);
+
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
         leftPanelLayout.setHorizontalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 184, Short.MAX_VALUE)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sldLRate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(leftPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(leftPanelLayout.createSequentialGroup()
+                                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(leftPanelLayout.createSequentialGroup()
+                                            .addComponent(lblLRate)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(lblSlider))
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 559, Short.MAX_VALUE)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblLRate)
+                    .addComponent(lblSlider))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sldLRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         rightPanel.setBorder(null);
@@ -171,8 +288,8 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -199,12 +316,62 @@ public class MainFrame extends javax.swing.JFrame {
             try {
                 this.ptask = PerceptronTask.loadFromXML(this.datafile);
                 this.plot.setPerceptronTask(ptask);
+                this.sldLRate.setValue((int)(this.ptask.getPerceptron().getLerningRate()*10));
+                this.fillTables(ptask);
+//                this.createWeightTable(ptask);
             } catch (JAXBException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btnLoadXmlActionPerformed
 
+    private void fillTables(PerceptronTask pt)
+    {
+        Perceptron ptron = ptask.getPerceptron();
+        
+        DefaultTableModel tm = (DefaultTableModel) this.tblWeights.getModel();
+        
+        tm.addRow(new Object[] { "w0", ptron.getWeights()[0], ""});
+        for (int i = 1; i < ptron.getWeights().length; i++)
+        {
+            Object[] w = { 
+                "w" + Integer.toString(i),
+                ptron.getWeights()[i],
+                ptron.getInputDescriptions()[i-1].getName(),
+                ptron.getInputDescriptions()[i-1].getMinimum(),
+                ptron.getInputDescriptions()[i-1].getMaximum()
+            };
+            tm.addRow(w);
+        }
+        
+        if (ptron.getInputDescriptions().length > 2)
+            return;
+    }
+    
+//    private void createWeightTable(PerceptronTask pt)
+//    {
+//        this.paneW.removeAll();
+//        String[] columns = { "w(i)", "Weight", "Input", "Min", "Max" };
+//        Object[][] data = new Object[pt.getPerceptron().getWeights().length][];
+//        Object[] w0 = { "w0", pt.getPerceptron().getWeights()[0], "", "", 0, 0 };
+//        data[0] = w0;
+//        for (int i = 1; i < pt.getPerceptron().getWeights().length; i++)
+//        {
+//            Object[] w = { 
+//                "w" + Integer.toString(i),
+//                pt.getPerceptron().getWeights()[i],
+//                pt.getPerceptron().getInputDescriptions()[i-1].getName(),
+//                pt.getPerceptron().getInputDescriptions()[i-1].getMinimum(),
+//                pt.getPerceptron().getInputDescriptions()[i-1].getMaximum()
+//                
+//            };
+//            data[i] = w;
+//        }
+//        this.tWeights = new JTable(data, columns);
+//        this.paneW.add(tWeights);
+//    }
+//    
+    
     private void btnSaveXmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveXmlActionPerformed
         if (this.ptask == null)
             return;
@@ -259,6 +426,14 @@ public class MainFrame extends javax.swing.JFrame {
         this.lblIter.setText("0");
     }//GEN-LAST:event_btnResetActionPerformed
 
+    private void sldLRateStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldLRateStateChanged
+        double value = (double)this.sldLRate.getValue()/10.0;
+        this.lblSlider.setText(Double.toString(value));
+        if (this.ptask == null)
+            return;
+        this.ptask.getPerceptron().setLerningRate(value);
+    }//GEN-LAST:event_sldLRateStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnComplete;
@@ -266,13 +441,22 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnOneStep;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSaveXml;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblItHead;
     private javax.swing.JLabel lblIter;
+    private javax.swing.JLabel lblLRate;
+    private javax.swing.JLabel lblSlider;
     private javax.swing.JLabel lblState;
     private javax.swing.JLabel lblStateHead;
     private javax.swing.JPanel leftPanel;
     private hebblearning.gui.Plot plot;
     private javax.swing.JPanel rightPanel;
+    private javax.swing.JSlider sldLRate;
+    private javax.swing.JTable tblTest;
+    private javax.swing.JTable tblTrain;
+    private javax.swing.JTable tblWeights;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

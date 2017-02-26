@@ -7,6 +7,8 @@ package hebblearning.gui;
 
 import hebblearning.perceptron.Perceptron;
 import hebblearning.perceptron.PerceptronTask;
+import hebblearning.perceptron.TestSetElement;
+import hebblearning.perceptron.TrainSetElement;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +32,6 @@ public class MainFrame extends javax.swing.JFrame {
     
     private PerceptronTask ptask = null;
     private File datafile = null;
-//    private JTable tWeights;
-//    private JTable tTrain;
-//    private JTable tTest;
     
     /**
      * Creates new form MainFrame
@@ -318,7 +317,6 @@ public class MainFrame extends javax.swing.JFrame {
                 this.plot.setPerceptronTask(ptask);
                 this.sldLRate.setValue((int)(this.ptask.getPerceptron().getLerningRate()*10));
                 this.fillTables(ptask);
-//                this.createWeightTable(ptask);
             } catch (JAXBException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -330,6 +328,8 @@ public class MainFrame extends javax.swing.JFrame {
         Perceptron ptron = ptask.getPerceptron();
         
         DefaultTableModel tm = (DefaultTableModel) this.tblWeights.getModel();
+        for (int i = tm.getRowCount()-1; i >= 0; i--)
+            tm.removeRow(i);
         
         tm.addRow(new Object[] { "w0", ptron.getWeights()[0], ""});
         for (int i = 1; i < ptron.getWeights().length; i++)
@@ -346,31 +346,50 @@ public class MainFrame extends javax.swing.JFrame {
         
         if (ptron.getInputDescriptions().length > 2)
             return;
+        
+        tm = (DefaultTableModel)this.tblTrain.getModel();
+        tm.setColumnIdentifiers(new Object[]{
+            ptron.getInputDescriptions()[0].getName(),
+            ptron.getInputDescriptions()[1].getName(),
+            tm.getColumnName(2),
+            tm.getColumnName(3)
+        });
+        
+        tm = (DefaultTableModel)this.tblTest.getModel();
+        tm.setColumnIdentifiers(new Object[]{
+            ptron.getInputDescriptions()[0].getName(),
+            ptron.getInputDescriptions()[1].getName(),
+            tm.getColumnName(2)
+        });
+        
+        tm = (DefaultTableModel) this.tblTrain.getModel();
+        for (int i = tm.getRowCount()-1; i >= 0; i--)
+            tm.removeRow(i);
+        int row = 0;
+        for (TrainSetElement te : pt.getTrainSet())
+        {
+            Object[] w = { 
+                te.getInputs()[0],
+                te.getInputs()[1],
+                te.getOutput(),
+                (pt.getOutputs().isEmpty()) ? 0 : pt.getOutputs().get(row++)
+            };
+            tm.addRow(w);
+        }
+        
+        tm = (DefaultTableModel) this.tblTest.getModel();
+        for (int i = tm.getRowCount()-1; i >= 0; i--)
+            tm.removeRow(i);
+        for (TestSetElement te : pt.getTestSet())
+        {
+            Object[] w = { 
+                te.getInputs()[0],
+                te.getInputs()[1],
+                1.0
+            };
+            tm.addRow(w);
+        }
     }
-    
-//    private void createWeightTable(PerceptronTask pt)
-//    {
-//        this.paneW.removeAll();
-//        String[] columns = { "w(i)", "Weight", "Input", "Min", "Max" };
-//        Object[][] data = new Object[pt.getPerceptron().getWeights().length][];
-//        Object[] w0 = { "w0", pt.getPerceptron().getWeights()[0], "", "", 0, 0 };
-//        data[0] = w0;
-//        for (int i = 1; i < pt.getPerceptron().getWeights().length; i++)
-//        {
-//            Object[] w = { 
-//                "w" + Integer.toString(i),
-//                pt.getPerceptron().getWeights()[i],
-//                pt.getPerceptron().getInputDescriptions()[i-1].getName(),
-//                pt.getPerceptron().getInputDescriptions()[i-1].getMinimum(),
-//                pt.getPerceptron().getInputDescriptions()[i-1].getMaximum()
-//                
-//            };
-//            data[i] = w;
-//        }
-//        this.tWeights = new JTable(data, columns);
-//        this.paneW.add(tWeights);
-//    }
-//    
     
     private void btnSaveXmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveXmlActionPerformed
         if (this.ptask == null)
@@ -402,6 +421,7 @@ public class MainFrame extends javax.swing.JFrame {
             this.lblState.setText("LEARNED");
         }
         this.lblIter.setText(Integer.toString(this.ptask.getIteration()));
+        this.fillTables(ptask);
         this.repaint();
     }//GEN-LAST:event_btnOneStepActionPerformed
 
@@ -412,6 +432,7 @@ public class MainFrame extends javax.swing.JFrame {
         while(this.ptask.learn());
         this.lblIter.setText(Integer.toString(this.ptask.getIteration()));
         this.lblState.setText("LEARNED");
+        this.fillTables(ptask);
         this.repaint();
     }//GEN-LAST:event_btnCompleteActionPerformed
 
@@ -424,6 +445,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
         this.lblState.setText("Learning");
         this.lblIter.setText("0");
+        this.fillTables(ptask);
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void sldLRateStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldLRateStateChanged

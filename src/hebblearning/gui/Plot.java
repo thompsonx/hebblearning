@@ -97,7 +97,8 @@ public class Plot extends JComponent {
         g2.drawString(y_min_str, (float)(rect_x-(ts/1.7)*y_min_str.length()), (float)(rect_y+rect_h));
         g2.drawString(y_max_str, (float)(rect_x-(ts/1.7)*y_max_str.length()), (float)(rect_y));
         
-        List<TestSetElement> points = this.ptask.getTestSet();
+        List<TestSetElement> points = new ArrayList<>();
+        points.addAll(this.ptask.getTestSet());
         points.addAll(this.ptask.getTrainSet());
         
         double x_scale = rect_w / x_len;

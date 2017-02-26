@@ -27,6 +27,17 @@ public class PerceptronTask {
     private List<TestSetElement> testSet;
     private boolean learned = false;
     private int iteration = 0;
+    private List<Double> outputs = new ArrayList<>();
+    private List<Double> testOutputs = new ArrayList<>();
+
+    
+    public List<Double> getOutputs() {
+        return outputs;
+    }
+    
+    public List<Double> getTestOutputs() {
+        return testOutputs;
+    }
 
     public int getIteration() {
         return iteration;
@@ -87,6 +98,7 @@ public class PerceptronTask {
     {
         if (this.learned == true) return false;
         
+        this.outputs.clear();
         Perceptron p = this.perceptron;
         boolean changed = false;
         this.iteration++;
@@ -103,6 +115,7 @@ public class PerceptronTask {
                 sum += weights[i]*inputs.get(i);
             
             double y = this.signum(sum);
+            this.outputs.add(y);
             
             double delta = e.getOutput() - y;
             if (delta != 0) changed = true;

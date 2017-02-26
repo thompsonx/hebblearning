@@ -99,6 +99,7 @@ public class PerceptronTask {
         if (this.learned == true) return false;
         
         this.outputs.clear();
+        this.testOutputs.clear();
         Perceptron p = this.perceptron;
         boolean changed = false;
         this.iteration++;
@@ -123,6 +124,22 @@ public class PerceptronTask {
             for (int i = 0; i < inputs.size(); i++) 
                 weights[i] += p.getLerningRate() * delta * inputs.get(i);
             p.setWeights(weights);
+        }
+        
+        for (TestSetElement e : this.testSet)
+        {
+            List<Double> inputs = new ArrayList<>();
+            inputs.add(1.0);
+            for (double d : e.getInputs()) inputs.add(d);
+            double[] weights = p.getWeights();
+            double sum = 0;            
+            
+            for (int i = 0; i < inputs.size(); i++) 
+                sum += weights[i]*inputs.get(i);
+            
+            double y = this.signum(sum);
+//            System.out.printf("SUM: %f, Y: %f\n", sum, y);
+            this.testOutputs.add(y);
         }
         
 //        System.out.println(Boolean.toString(changed));

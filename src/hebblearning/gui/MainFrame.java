@@ -10,18 +10,11 @@ import hebblearning.perceptron.PerceptronTask;
 import hebblearning.perceptron.TestSetElement;
 import hebblearning.perceptron.TrainSetElement;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -378,6 +371,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
         
         tm = (DefaultTableModel) this.tblTest.getModel();
+        row = 0;
         for (int i = tm.getRowCount()-1; i >= 0; i--)
             tm.removeRow(i);
         for (TestSetElement te : pt.getTestSet())
@@ -385,7 +379,7 @@ public class MainFrame extends javax.swing.JFrame {
             Object[] w = { 
                 te.getInputs()[0],
                 te.getInputs()[1],
-                1.0
+                (pt.getTestOutputs().isEmpty()) ? 0 : pt.getTestOutputs().get(row++)
             };
             tm.addRow(w);
         }

@@ -9,10 +9,10 @@ import hebblearning.perceptron.InputDescription;
 import hebblearning.perceptron.Perceptron;
 import hebblearning.perceptron.PerceptronTask;
 import hebblearning.perceptron.TestSetElement;
+import hebblearning.perceptron.TrainSetElement;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -117,7 +117,6 @@ public class Plot extends JComponent {
         sd.x_scale = x_scale;
         sd.y_scale = y_scale;
         
-        g2.setColor(Color.BLUE);
         for (TestSetElement p : points)
         {
             double x = (p.getInputs()[0] - x_min)*x_scale + rect_x;
@@ -125,7 +124,10 @@ public class Plot extends JComponent {
             
 //            System.out.printf("Point: %f %f // %f %f\n", p.getInputs()[0],
 //                    p.getInputs()[1], x, y);
-            
+            if (p instanceof TrainSetElement)
+                g2.setColor(Color.BLUE);
+            else
+                g2.setColor(Color.RED);
             g2.draw(new Ellipse2D.Double(x-ratio/2, y+ratio/2, ratio, ratio));
         }
         
